@@ -18,7 +18,7 @@ class App extends Component {
     return (
       <div>
         <h1>{this.state.name}</h1>
-        <Form changeName={this.setNewCandidate.bind(App)}/>
+        <Form changeName={this.setNewCandidate.bind(this)}/>
         <Button text="Create"/>
         <button onClick={()=>{this.setNewCandidate("Alex")}}>Create 2 </button>
       </div>
