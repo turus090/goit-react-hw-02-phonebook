@@ -1,6 +1,7 @@
+import s from"./button.module.css"
 const Button = (props) => {
 return (
-    <button onClick={props.handelClick}>
+    <button className={s.button} onClick={props.handleClick}>
         {props.text}
     </button>
 )
