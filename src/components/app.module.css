@@ -22,13 +22,3 @@
     font-weight: 700;
     font-size: 24px;
 }
-
-.contactItem{
-    margin: 0 auto;
-    width: 20%;
-    display: flex;
-    column-gap: 10px;
-    padding: 20px;
-    border: 2px solid rgb(61, 58, 58) ;
-    border-radius: 8px;
-}

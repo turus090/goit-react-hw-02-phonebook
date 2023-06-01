@@ -4,16 +4,33 @@ import Button from "./button/Button";
 import Filter from "./filter/Filter"; 
 
 import s from "./app.module.css";
+import List from "./list/List";
 
 
 class App extends Component {
   state = {
     contacts: [],
+    searchResults: [],
     name: '',
     phone: '',
+    status: 'viewList',
   }
- 
+// status - viewList - search 
   render() {
+    const changeSearchInput = (searchText) => {
+      if (searchText.length === 0){
+        this.setState( {
+          ...this.state,
+          searchResults: [],
+          status:'viewList'
+        })
+      } else { 
+        this.setState({
+          ...this.state,
+          status: 'search'
+        })
+      }
+    }
     const setNewCandidate = () =>{
       this.setState({
         name: '',
@@ -60,16 +77,10 @@ class App extends Component {
         />
         <Button text="Add contact" handleClick={setNewCandidate}/>
       </div>
-      <Filter/>
-        <ul>
-        {this.state.contacts.map(contact => (
-          <li className={s.contactItem} key={contact.id}>
-            <p>{contact.name}: </p>
-            <p>{contact.phone}</p>
-            </li>
-            
-        ))}
-        </ul>
+      <Filter changeEvent = {changeSearchInput}/>
+      <List 
+        list={this.state.status==="viewList" ? this.state.contacts : this.state.searchResults}
+        />
 
       </div>
     )
