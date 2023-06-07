@@ -38,7 +38,12 @@ class App extends Component {
   }
 // status - viewList - search 
   render() {
-
+      const deleteContact = (idCandidate) => {
+        this.setState({
+          ...this.state,
+          contacts: this.state.contacts.filter(contact => contact.id !== idCandidate)
+        }, startSearch)
+      }
 
      const startSearch = () => {
       this.setState({
@@ -123,6 +128,7 @@ class App extends Component {
       <Filter changeEvent = {changeSearchInput}/>
       <List 
         list={this.state.status==="viewList" ? this.state.contacts : this.state.searchResults}
+        deleteContact={deleteContact} 
         />
 
       </div>

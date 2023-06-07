@@ -6,7 +6,7 @@ const ListItem = (props) => {
              <p>{props.name}: </p>
              <p>{props.phone}</p>
            </div>
-            <button> Delete </button>
+            <button onClick={()=>{props.deleteContact(props.id)}}> Delete </button>
         </li>
     )
 }
