@@ -4,8 +4,8 @@ import { createRef } from "react"
 const Filter = (props) => {
     let inputRef = createRef()
     const handleChange = () =>{
-        console.log(inputRef.current.value)
-        props.changeEvent(inputRef.current.value)
+        localStorage.setItem("searchText",inputRef.current.value)
+        props.changeEvent(inputRef.current.value.length)
     }
     return(
         <div className={s.block}>

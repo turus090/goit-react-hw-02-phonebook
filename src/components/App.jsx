@@ -7,7 +7,7 @@ import Form from "./form/Form";
 import List from "./list/List";
 
 import s from "./app.module.css";
-import search from "assets/search";
+import { startSearch } from "assets/search";
 
 
 
@@ -30,105 +30,64 @@ class App extends Component {
         phone: 123
       },
     ],
-    searchResults: [],
-    searchValue: '',
-    name: '',
-    phone: '',
     status: 'viewList',
   }
-// status - viewList - search 
-  render() {
-      const deleteContact = (idCandidate) => {
-        this.setState({
-          ...this.state,
-          contacts: this.state.contacts.filter(contact => contact.id !== idCandidate)
-        }, startSearch)
-      }
-
-     const startSearch = () => {
-      this.setState({
+  deleteContact = (idCandidate) => {
+    this.setState({
+      ...this.state,
+      contacts: this.state.contacts.filter(contact => contact.id !== idCandidate)
+    })
+  }
+  changeSearchInput = (length) => {
+    if (length === 0){
+      this.setState( {
         ...this.state,
-        searchResults: this.state.contacts.filter(contactItem=>{
-          if (search(contactItem.name, this.state.searchValue)) {
-            return contactItem
-          }
-        }),
+        status:'viewList'
+      })
+    } else { 
+      this.setState({
+        status: 'search'
       })
     }
-    const changeSearchInput = (searchText) => {
-      if (searchText.length === 0){
-        this.setState( {
-          ...this.state,
-          searchValue: '',
-          searchResults: [],
-          status:'viewList'
-        })
-      } else { 
+  }
+
+  setNewCandidate = () =>{
+    const candidate = JSON.parse(localStorage.getItem('candidate'))
+    if ( candidate.name.length === 0 || candidate.phone.length === 0) {
+      Notify.warning("Please enter  name or phone number")
+    } else {
+      let result = false 
+      this.state.contacts.forEach(contact => {
+        if (contact.name === candidate.name){
+          result = true}
+      })
+      if (result) {
+        Notify.warning(`${candidate.name} is already in contact`)
+      } else {
         this.setState({
           ...this.state,
-          searchValue: searchText,
-          status: 'search'
-        }, startSearch)
-      }
-    }
-
-   
-
-    const setNameCandidate = (nameCandidate) => {
-      this.setState({
-        ...this.state,
-        name: nameCandidate
-    })
-    }
-    const setPhoneCandidate = (phoneCandidate) => {
-      this.setState({
-        ...this.state,
-        phone: phoneCandidate
-    })
-    }
-
-    const setNewCandidate = () =>{
-      if ( this.state.name.length === 0 || this.state.phone.length === 0) {
-        Notify.warning("Please enter  name or phone number")
-      } else {
-        let result = false 
-        this.state.contacts.forEach(contact => {
-          if (contact.name === this.state.name){
-            result = true}
+          contacts: [
+            ...this.state.contacts,
+            {
+              id: nanoid(),
+              ...candidate
+            }
+          ]
         })
-        if (result) {
-          Notify.warning(`${this.state.name} is already in contact`)
-        } else {
-          this.setState({
-            name: '',
-            phone: '',
-            contacts: [
-              ...this.state.contacts,
-              {
-                id: nanoid(),
-                name: this.state.name,
-                phone: this.state.phone
-              }
-            ]
-          })
-        }
-       
       }
     }
+  }
+  render() {
     return (
       <div>
       <h2 className={s.title}>Phonebook</h2>
       <Form 
-        setNameCandidate={setNameCandidate} 
-        setPhoneCandidate={setPhoneCandidate} 
-        setNewCandidate={setNewCandidate}
-        name={this.state.name}
-        phone={this.state.phone}
+        setNewCandidate={this.setNewCandidate}
       />
-      <Filter changeEvent = {changeSearchInput}/>
+      <Filter changeEvent = {this.changeSearchInput}/>
       <List 
-        list={this.state.status==="viewList" ? this.state.contacts : this.state.searchResults}
-        deleteContact={deleteContact} 
+        list={this.state.status==="viewList" ? this.state.contacts : startSearch(this.state.contacts, localStorage.getItem('searchText'))}
+        deleteContact={this.deleteContact} 
         />
 
       </div>
