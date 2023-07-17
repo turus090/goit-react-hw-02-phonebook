@@ -15,30 +15,36 @@ class App extends Component {
   state = {
     contacts: [
       {
-        id:1,
+        id:'1',
         name:"John",
-        phone: 123
+        phone: '123'
       },
       {
-        id:21,
+        id:'21',
         name:"John Smith",
-        phone: 123
+        phone: '123'
       },
       {
-        id:3,
+        id:'3',
         name:"Bob",
-        phone: 123
+        phone: '123'
       },
     ],
-    status: 'viewList',
+    filter: ''
   }
   deleteContact = (idCandidate) => {
-    this.setState({
-      ...this.state,
-      contacts: this.state.contacts.filter(contact => contact.id !== idCandidate)
-    })
+    this.setState(prevState => ({
+        contacts: prevState.contacts.filter(contact => contact.id !== idCandidate)
+     })
+    )
   }
-  changeSearchInput = (length) => {
+  changeFilterValue = (newValue) => { 
+    this.setState(prevState => ({
+        filter: newValue
+      })
+    )
+  }
+  /*changeSearchInput = (length) => {
     if (length === 0){
       this.setState( {
         ...this.state,
@@ -48,6 +54,28 @@ class App extends Component {
       this.setState({
         status: 'search'
       })
+    }
+  }*/
+  setNewContact = (contactCandidate) => { 
+    console.log(contactCandidate)
+    if(contactCandidate.name.length === 0 || contactCandidate.phone.length === 0) {
+      Notify.warning("Please enter  name or phone number")
+    } else { 
+      const result = this.state.contacts.find(contactItem => contactItem.name === contactCandidate.name)
+      if (result){
+        Notify.warning(`${contactCandidate.name} is already in contact`)
+      } else { 
+        this.setState(prevState => ({
+            contacts: [
+              ...prevState.contacts,
+              {
+                id: nanoid(),
+                ...contactCandidate
+              }
+            ]
+          })
+        )
+      }
     }
   }
 
@@ -82,11 +110,14 @@ class App extends Component {
       <div>
       <h2 className={s.title}>Phonebook</h2>
       <Form 
-        setNewCandidate={this.setNewCandidate}
+        setNewContact = {this.setNewContact}
       />
-      <Filter changeEvent = {this.changeSearchInput}/>
+      <Filter
+        filterValue = {this.state.filter} 
+        changeEvent = {this.changeFilterValue}
+        />
       <List 
-        list={this.state.status==="viewList" ? this.state.contacts : startSearch(this.state.contacts, localStorage.getItem('searchText'))}
+        list={this.state.filter.length === 0 ? this.state.contacts : startSearch(this.state.contacts, this.state.filter)}
         deleteContact={this.deleteContact} 
         />
 
