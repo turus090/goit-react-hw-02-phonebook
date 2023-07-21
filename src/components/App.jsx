@@ -7,7 +7,7 @@ import Form from "./form/Form";
 import List from "./list/List";
 
 import s from "./app.module.css";
-import { startSearch } from "assets/search";
+import Message from "./message/Message";
 
 
 
@@ -44,28 +44,15 @@ class App extends Component {
       })
     )
   }
-  /*changeSearchInput = (length) => {
-    if (length === 0){
-      this.setState( {
-        ...this.state,
-        status:'viewList'
-      })
-    } else { 
-      this.setState({
-        status: 'search'
-      })
-    }
-  }*/
+  
   setNewContact = (contactCandidate) => { 
     console.log(contactCandidate)
-    if(contactCandidate.name.length === 0 || contactCandidate.phone.length === 0) {
-      Notify.warning("Please enter  name or phone number")
-    } else { 
-      const result = this.state.contacts.find(contactItem => contactItem.name === contactCandidate.name)
+      const result = this.state.contacts.find(contactItem => contactItem.name.toLowerCase() === contactCandidate.name.toLowerCase())
       if (result){
         Notify.warning(`${contactCandidate.name} is already in contact`)
-      } else { 
-        this.setState(prevState => ({
+        return ({})
+      } 
+      this.setState(prevState => ({
             contacts: [
               ...prevState.contacts,
               {
@@ -75,35 +62,14 @@ class App extends Component {
             ]
           })
         )
-      }
-    }
+    
   }
-
-  setNewCandidate = () =>{
-    const candidate = JSON.parse(localStorage.getItem('candidate'))
-    if ( candidate.name.length === 0 || candidate.phone.length === 0) {
-      Notify.warning("Please enter  name or phone number")
-    } else {
-      let result = false 
-      this.state.contacts.forEach(contact => {
-        if (contact.name === candidate.name){
-          result = true}
-      })
-      if (result) {
-        Notify.warning(`${candidate.name} is already in contact`)
-      } else {
-        this.setState({
-          ...this.state,
-          contacts: [
-            ...this.state.contacts,
-            {
-              id: nanoid(),
-              ...candidate
-            }
-          ]
+  startSearch = () => {
+    const {contacts, filter}= this.state
+        const result = contacts.filter(contactItem => {
+        return contactItem.name.toLowerCase().includes(filter.toLowerCase())
         })
-      }
-    }
+        return result
   }
   render() {
     return (
@@ -116,8 +82,14 @@ class App extends Component {
         filterValue = {this.state.filter} 
         changeEvent = {this.changeFilterValue}
         />
+        {
+          
+          this.state.contacts.length === 0 ||
+          (this.state.filter.length !== 0 &&  this.startSearch().length === 0) ?
+          <Message text="No items in list"/> : null
+        }
       <List 
-        list={this.state.filter.length === 0 ? this.state.contacts : startSearch(this.state.contacts, this.state.filter)}
+        list={this.state.filter.length === 0 ? this.state.contacts : this.startSearch()}
         deleteContact={this.deleteContact} 
         />
 

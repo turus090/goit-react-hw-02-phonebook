@@ -2,6 +2,7 @@ import propTypes from 'prop-types'
 import s from "./form.module.css"
 import Button from "../button/Button"
 import {Component} from "react"
+import { Notify } from 'notiflix'
 
 class Form extends Component { 
     constructor(setNewContact) { 
@@ -17,12 +18,20 @@ class Form extends Component {
         }))
     }
     handleCreate = () => { 
-        this.props.setNewContact(this.state)
-        this.setState({})
+        if (this.state.name.length === 0 || this.state.phone.length === 0) {
+            Notify.warning("Please enter  name or phone number")
+        } else {
+            this.props.setNewContact(this.state)
+            this.setState({
+                name:"",
+                phone:""
+            })
+            }
+    
     }
     render(){ 
         return(
-            <div className={s.form}>
+            <form className={s.form}>
                 <p className={s.title}> Create new contact</p>
                 <input className={s.wrapper}
                 type="text"
@@ -45,7 +54,7 @@ class Form extends Component {
                 onChange={e=> this.handleUpdate('phone', e.target.value)}
                 />
                 <Button text="Add contact" handleClick={this.handleCreate}/>
-            </div>
+            </form>
         )
     }
 }
@@ -53,55 +62,5 @@ class Form extends Component {
 Form.propTypes = {
 setNewContact: propTypes.func
 }
-/*
-const Form = (props) => {
-    useEffect(() => { 
-        localStorage.setItem('candidate', JSON.stringify({}))
-    }, [])
-    const [candidate, setCandidate] = useState({
-        name: "",
-        phone: ""
-    })
-    const handleUpdate = (dataType, dataValue) => {
-        setCandidate({
-            ...candidate,
-            [dataType]: dataValue
-        })
-    }
-    const handleClick = () => { 
-        localStorage.setItem("candidate", JSON.stringify(candidate))
-        props.setNewCandidate()
-        setCandidate({
-            name:"",
-            phone:""
-        })
-    }
-return(
-    <div className={s.form}>
-        <p className={s.title}> Create new contact</p>
-        <input className={s.wrapper}
-        type="text"
-        name="name"
-        pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-        title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-        required
-        value={candidate.name}
-        onChange={e=> handleUpdate('name', e.target.value)}
-        placeholder="Entry new name"
-        />
-        <input className={s.wrapper}
-        type="tel"
-        name="number"
-        value={candidate.number}
-        pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-        title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-        required
-        placeholder="Entry new phone number"
-        onChange={e=> handleUpdate('phone', e.target.value)}
-        />
-        <Button text="Add contact" handleClick={handleClick}/>
-    </div>
-    )
-}
-*/
+
 export default Form

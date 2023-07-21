@@ -7,7 +7,6 @@ const List = ({list, deleteContact}) => {
     return (
         <ul>
             {listCollection}
-            {list.length === 0 ? <p className={s.messege}>No items in list</p> : null}
         </ul>
         )
     }
