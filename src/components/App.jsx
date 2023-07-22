@@ -86,12 +86,13 @@ class App extends Component {
           
           this.state.contacts.length === 0 ||
           (this.state.filter.length !== 0 &&  this.startSearch().length === 0) ?
-          <Message text="No items in list"/> : null
+          <Message text="No items in list"/> : 
+          <List 
+            list={this.startSearch()}
+            deleteContact={this.deleteContact} 
+          />
         }
-      <List 
-        list={this.state.filter.length === 0 ? this.state.contacts : this.startSearch()}
-        deleteContact={this.deleteContact} 
-        />
+      
 
       </div>
     )
